@@ -1,20 +1,27 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
 
-type FormFields = {
-  email: string;
-  password: string;
-};
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+type FormFields = z.infer<typeof schema>;
 
 export default function Home() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormFields>();
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>({
+    resolver: zodResolver(schema),
+  });
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log(data);
   };
 
@@ -25,8 +32,9 @@ export default function Home() {
         <input
           type="email"
           placeholder="Email"
-          {...(register("email"), { required: true })}
+          {...register("email", { required: true })}
           className="border border-gray-300 p-2 rounded-lg mb-4"
+          style={{ color: "black" }}
         />
         {errors.email && (
           <div className="text-red-500">{errors.email.message}</div>
@@ -34,14 +42,15 @@ export default function Home() {
         <input
           type="password"
           placeholder="Password"
-          {...(register("password"), { required: true })}
+          {...register("password", { required: true })}
           className="border border-gray-300 p-2 rounded-lg mb-4"
+          style={{ color: "black" }}
         />
         {errors.password && (
           <div className="text-red-500">{errors.password.message}</div>
         )}
         <button className="bg-blue-500 text-white p-2 rounded-lg">
-          Submit
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </main>
