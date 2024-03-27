@@ -1,4 +1,19 @@
-export const questions = [
+type MCQQuestion = {
+  id: number;
+  type: "mcq";
+  question: string;
+  options: number[];
+};
+
+type NumberQuestion = {
+  id: number;
+  type: "number";
+  question: string;
+};
+
+type Question = MCQQuestion | NumberQuestion;
+
+export const questions: Question[] = [
   {
     id: 1,
     type: "mcq",
